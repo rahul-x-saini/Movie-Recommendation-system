@@ -3,14 +3,37 @@ import streamlit as st
 import requests
 import os
 from dotenv import load_dotenv
+import gdown
 
 load_dotenv()  # Load variables from .env
 API_KEY = os.getenv("TMDB_API_KEY")
 
+# -----------------------------
+# Step 1: Set up pickle files
+# -----------------------------
+files = {
+    "similarity.pkl": "1jg3PjX6Z711an87fYcAynLZiTOotC0lc",
+    "movielist.pkl": "1S_Mryz72uo7B_wAGvjVokabqk-lbyemv"
+}
 
-movies = pickle.load(open('movie_list.pkl','rb'))
-similarity = pickle.load(open('similarity.pkl','rb'))
+for fname, file_id in files.items():
+    if not os.path.exists(fname):
+        url = f"https://drive.google.com/uc?id={file_id}"
+        st.write(f"Downloading {fname}...")
+        gdown.download(url, fname, quiet=False)
 
+# -----------------------------
+# Step 2: Load pickle files
+# -----------------------------
+with open("similarity.pkl", "rb") as f:
+    similarity = pickle.load(f)
+
+with open("movielist.pkl", "rb") as f:
+    movies = pickle.load(f)
+
+# -----------------------------
+# Step 3: Streamlit app
+# -----------------------------
 
 st.set_page_config(layout="wide", page_title="Movie Recommender", page_icon="🎬")
 
